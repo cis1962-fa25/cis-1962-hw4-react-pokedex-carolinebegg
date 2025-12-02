@@ -40,18 +40,33 @@ private static async request<T>(
     headers,
   });
 
+  // Handle non-2xx responses
   if (!res.ok) {
     let message = `API error ${res.status}`;
     try {
       const body = await res.json();
-      if (body.message) message = body.message;
-    } catch {}
+      if (body && typeof body.message === 'string') {
+        message = body.message;
+      }
+    } catch {
+      // ignore parse errors for error responses
+    }
     throw new Error(message);
   }
 
-  if (res.status === 204) return {} as T;
+  // ✅ 204 No Content (DELETE /box/:id, DELETE /box/, etc.)
+  if (res.status === 204) {
+    return undefined as T;
+  }
 
-  return res.json() as Promise<T>;
+  // ✅ Some 2xx responses may have an empty body
+  const text = await res.text();
+  if (!text) {
+    return undefined as T;
+  }
+
+  // ✅ Normal JSON response
+  return JSON.parse(text) as T;
 }
 
   // ----------------------------------------------------------
