@@ -51,16 +51,11 @@ const PokemonList = ({ pageSize = 10, onPokemonLoaded }: PokemonListProps) => {
         };
 
         void fetchPage();
-    }, [currentPage, pageSize]);
+    }, [currentPage, pageSize, onPokemonLoaded]);
 
     const handleCreateBoxEntry = async (entry: InsertBoxEntry) => {
-        try {
-            await PokemonAPI.createBoxEntry(entry);
-            setCatchingPokemon(null);
-        } catch (err) {
-            // Re-throw so BoxForm can show the error message
-            throw err;
-        }
+        await PokemonAPI.createBoxEntry(entry);
+        setCatchingPokemon(null);
     };
 
     return (

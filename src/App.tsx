@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import './App.css';
 import PokemonList from './components/PokemonList';
 import BoxList from './components/BoxList';
@@ -18,7 +18,7 @@ function App() {
     // map of pokemonId -> Pokemon, built from pages loaded in the list view
     const [pokemonById, setPokemonById] = useState<Record<number, Pokemon>>({});
 
-    const handlePokemonLoaded = (pokemonList: Pokemon[]) => {
+    const handlePokemonLoaded = useCallback((pokemonList: Pokemon[]) => {
         setPokemonById((prev) => {
             const updated: Record<number, Pokemon> = { ...prev };
             for (const p of pokemonList) {
@@ -26,7 +26,7 @@ function App() {
             }
             return updated;
         });
-    };
+    }, []);
 
     return (
         <div className="app">
